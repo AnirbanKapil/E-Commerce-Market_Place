@@ -8,7 +8,7 @@ import prisma from "@/lib/prisma"
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt", // Enforces fast cookie validation without hitting the DB on page loads
+    strategy: "jwt", 
   },
   providers: [
     GoogleProvider({
