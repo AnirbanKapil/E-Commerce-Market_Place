@@ -25,15 +25,15 @@ export default function Navbar() {
           <>
             <button 
               onClick={() => signIn('google')} 
-              className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+              className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700"
             >
               Google Login
             </button>
             <button 
               onClick={() => signIn()} 
-              className="bg-gray-800 text-white px-3 py-1 rounded text-sm"
+              className="bg-gray-800 text-white px-3 py-1 rounded-lg text-sm hover:bg-gray-900"
             >
-              Credentials UI
+              LogIn With Credentials 
             </button>
           </>
         )}
