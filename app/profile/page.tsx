@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useGetMeQuery, useRegisterUserMutation } from '@/graphql/generated/hooks'
+import { useGetMeQuery, } from '@/graphql/generated/hooks'
 
 
 
