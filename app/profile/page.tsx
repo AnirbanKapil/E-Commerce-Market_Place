@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useGetMeQuery } from '@/graphql/generated/index'
+import { useGetMeQuery } from '@/lib/generated'
  
 
 
