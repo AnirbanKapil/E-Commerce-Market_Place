@@ -1,8 +1,8 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useGet, } from '@/graphql/generated/hooks'
-
+import { useGetMeQuery } from '@/graphql/generated/index'
+ 
 
 
 export default function ProfilePage () {

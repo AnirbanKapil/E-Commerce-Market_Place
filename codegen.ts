@@ -1,32 +1,47 @@
-import type { CodegenConfig } from '@graphql-codegen/cli'
+import type { CodegenConfig } from '@graphql-codegen/cli';
+
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:3000/api/graphql', 
-  documents: ['app/**/*.tsx', 'components/**/*.tsx', 'graphql/**/*.ts'],
-
-  ignoreNoDocuments: true, 
+  overwrite: true,
+  schema: "./graphql/**/*.ts",
+  documents: [
+  "app/**/*.{ts,tsx,graphql}",
+  "!node_modules",
+  "!lib/generated.ts",
+  "!**/*.test.*",
+  "!**/__tests__/**"
+],
   generates: {
-    './graphql/generated/': {
-      preset: 'client',
-      plugins: [],
-      presetConfig: {
-        gqlTagName: 'gql',
-      },
-    },
-    './graphql/generated/hooks.ts': {
+    "lib/generated.ts": {
       plugins: [
-        'typescript',
-        'typescript-operations',
-        'typescript-react-query',
+        "typescript",
+        "typescript-operations",
+        "typescript-react-query",
+        {
+          add: {
+          content: `
+          class TypedDocumentString<TResult, TVariables> extends String {
+            private __apiType?: TResult;
+            private __variables?: TVariables;
+            constructor(private value: string) {
+            super(value);
+            }
+            toString(): string {
+            return this.value;
+          }
+        }
+        `  
+        }
+        }
       ],
       config: {
-        fetcher: {
-          func: '@/graphql/fetcher#useCustomFetcher',
-          isHook: true,
-        },
-      },
-    },
-  },
+           fetcher: './fetcher#useCustomFetcher',
+       reactQueryVersion: 5, 
+       exposeQueryKeys: true,
+       legacyMode: false,
 }
+    }
+  }
+};
 
-export default config
+export default config;
