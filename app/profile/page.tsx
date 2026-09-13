@@ -12,13 +12,16 @@ export default function ProfilePage () {
     {}, 
     { enabled: !!session }
     );
-
+    if (isLoading) return <p>Loading...</p>;
+    console.log(data)
     return (
         <main className="p-8 max-w-lg mx-auto space-y-8">
             <div className="p-6 border rounded-lg bg-white shadow-sm">
         <h2 className="text-xl font-bold mb-4">GraphQL Auth Context Info</h2>
         {isLoading && <p className="text-gray-500">Querying Apollo Server...</p>}
-        {error && <p className="text-red-500 font-medium">Error: {error.message}</p>}
+        if(error){
+          <p className="text-red-500 font-medium">Error: {String(error)}</p>
+        }
         
         {data?.me ? (
           <div className="space-y-1 text-sm text-gray-700">

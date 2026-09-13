@@ -20,7 +20,7 @@ const config: CodegenConfig = {
       config: {
         fetcher: './fetcher#useCustomFetcher',
         reactQueryVersion: 5, 
-        exposeQueryKeys: true,
+        exposeQueryKeys: false,
         legacyMode: false,
         errorsType: 'Error', // Optional: This keeps your hooks error messages type-safe!
       }

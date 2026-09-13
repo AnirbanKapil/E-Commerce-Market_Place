@@ -28,7 +28,9 @@ export const userResolvers = {
     users: async () => await prisma.user.findMany(),
     me: async (_: any, __: any, context: any) => {
       if (!context.session?.user) throw new Error("Not authenticated")
-      return await prisma.user.findUnique({ where: { email: context.session.user.email } })
+      const userOne = await prisma.user.findUnique({ where: { email: context.session.user.email } })
+      console.log("query me----",userOne)
+      return userOne
     }
   },
   Mutation: {
