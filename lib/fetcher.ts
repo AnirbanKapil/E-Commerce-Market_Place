@@ -8,8 +8,8 @@ const client = new GraphQLClient('/api/graphql', {
 })
 
 
-export const useCustomFetcher = <TData, TVariables>(query: string, variables?: TVariables) => {
+export const useCustomFetcher = <TData, TVariables>(query: any, variables?: TVariables) => {
   return async (): Promise<TData> => {
-    return client.request<TData, TVariables>(query, variables)
+    return client.request<TData, TVariables>(query.toString(), variables)
   }
 }
