@@ -1,14 +1,14 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useGetMeQuery } from '@/lib/generated'
+import { useGetMeQuery, GetMeQuery } from '@/lib/generated'
  
 
 
 export default function ProfilePage () {
     const { data: session } = useSession();
 
-    const { data, isLoading, error } = useGetMeQuery(
+    const { data, isLoading, error } = useGetMeQuery<GetMeQuery,Error>(
     {}, 
     { enabled: !!session }
     );
@@ -18,8 +18,10 @@ export default function ProfilePage () {
             <div className="p-6 border rounded-lg bg-white shadow-sm">
         <h2 className="text-xl font-bold mb-4">GraphQL Auth Context Info</h2>
         {isLoading && <p className="text-gray-500">Querying Apollo Server...</p>}
-        { error && (
-          <p className="text-red-500 font-medium">Error: {String(error)}</p>
+        {error && (
+          <p className="text-red-500 font-medium">
+            Error: {error instanceof Error ? error.message : String(error)}
+          </p>
         )}
         
         {data?.me ? (
