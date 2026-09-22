@@ -13,7 +13,6 @@ export default function ProfilePage () {
     { enabled: !!session }
     );
     if (isLoading) return <p>Loading...</p>;
-    console.log("data is-----",data)
     return (
         <main className="p-8 max-w-lg mx-auto space-y-8">
             <div className="p-6 border rounded-lg bg-white shadow-sm">

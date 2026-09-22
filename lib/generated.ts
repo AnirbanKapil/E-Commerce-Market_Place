@@ -108,8 +108,6 @@ export const useGetMeQuery = <
   }
     )};
 
-useGetMeQuery.getKey = (variables?: GetMeQueryVariables) => variables === undefined ? ['GetMe'] : ['GetMe', variables];
-
 export const RegisterUserDocument = new TypedDocumentString(`
     mutation RegisterUser($email: String!, $username: String!, $name: String!, $password: String!) {
   register(email: $email, username: $username, name: $name, password: $password) {
