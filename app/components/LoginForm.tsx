@@ -1,103 +1,67 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { useRegisterUserMutation } from '@/lib/generated'
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   
   
-  const [name, setName] = useState('')
-  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   
   
-  const [validationError, setValidationError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   
-  const { mutate: registerUser, isPending, error: graphQLError } = useRegisterUserMutation({
-    onSuccess: async () => {
-    
+  const callbackUrl = searchParams.get('callbackUrl') || '/profile'
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    try {
+     
       const result = await signIn('credentials', {
-        redirect: false,
+        redirect: false, 
         email,
         password,
       })
 
       if (result?.error) {
-        router.push('/api/auth/signin')
+        setError(result.error)
+        setLoading(false)
       } else {
-        router.push('/profile')
+        router.push(callbackUrl)
         router.refresh()
       }
-    },
-    onError: (err : any) => {
-      setValidationError(err.message || 'Something went wrong during registration.')
+    } catch (err) {
+      setError(`An unexpected system error occurred.Error message - ${err} `)
+      setLoading(false)
     }
-  })
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setValidationError(null)
-
-    
-    if (password.length < 6) {
-      setValidationError('Password must be at least 6 characters long.')
-      return
-    }
-
-   
-    registerUser({ email, username, name, password })
   }
 
   return (
     <div className="w-full max-w-md p-8 space-y-6 bg-black border border-gray-150 rounded-xl shadow-sm">
       <div className="text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-950">Create an Account</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-950">Welcome Back</h1>
         <p className="mt-2 text-sm text-gray-500">
-          Sign up to get started with GraphQL & NextAuth
+          Sign in to access your account dashboard
         </p>
       </div>
 
       
-      {(validationError || graphQLError) && (
+      {error && (
         <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-150 rounded-md">
-          {validationError || graphQLError?.message}
+          {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-            Full Name
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="Alex Carter"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-            Username
-          </label>
-          <input
-            type="text"
-            required
-            placeholder="alex_carter"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-          />
-        </div>
-
         <div>
           <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
             Email Address
@@ -113,9 +77,11 @@ export default function RegisterForm() {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-            Password
-          </label>
+          <div className="flex justify-between items-center mb-1">
+            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Password
+            </label>
+          </div>
           <input
             type="password"
             required
@@ -128,22 +94,22 @@ export default function RegisterForm() {
 
         <button
           type="submit"
-          disabled={isPending}
+          disabled={loading}
           className="w-full px-4 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-200"
         >
-          {isPending ? 'Registering Account...' : 'Create Account'}
+          {loading ? 'Verifying Credentials...' : 'Sign In'}
         </button>
       </form>
 
       <div className="relative flex py-2 items-center text-xs text-gray-400 uppercase tracking-wider">
         <div className="flex-grow border-t border-gray-200"></div>
-        <span className="flex-shrink mx-4">Or sign in with</span>
+        <span className="flex-shrink mx-4">Or use provider</span>
         <div className="flex-grow border-t border-gray-200"></div>
       </div>
 
-      {/* 🔵 Instant Social Google OAuth Redirect */}
+    
       <button
-        onClick={() => signIn('google', { callbackUrl: '/profile' })}
+        onClick={() => signIn('google', { callbackUrl })}
         type="button"
         className="w-full flex justify-center items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-sm transition"
       >
@@ -155,6 +121,13 @@ export default function RegisterForm() {
         </svg>
         Continue with Google
       </button>
+
+      <p className="text-center text-xs text-gray-500 mt-4">
+        Don&apos;t have an account?{' '}
+        <a href="/register" className="font-medium text-emerald-600 hover:text-emerald-500 underline">
+          Sign up here
+        </a>
+      </p>
     </div>
   )
 }
