@@ -8,7 +8,7 @@ export default withAuth(
   },
   {
     pages: {
-      signIn: "/signup", 
+      signIn: "/login", 
     },
     callbacks: {
       authorized: ({ token, req }) => {
@@ -16,8 +16,8 @@ export default withAuth(
 
         if (
           pathname === "/" || 
-          pathname === "/signin" || 
-          pathname === "/signup"
+          pathname === "/login" || 
+          pathname === "/register"
         ) {
           return true
         }
