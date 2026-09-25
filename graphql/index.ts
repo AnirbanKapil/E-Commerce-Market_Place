@@ -3,7 +3,7 @@ import { gql } from 'graphql-tag'
 import { mergeTypeDefs, mergeResolvers } from '@graphql-tools/merge'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { userTypeDefs, userResolvers } from './user'
-
+import { productTypeDefs, productResolvers } from './product'
 
 
 const baseTypeDefs = gql`
@@ -15,8 +15,8 @@ const baseTypeDefs = gql`
   }
 `
 
-const typeDefs = mergeTypeDefs([baseTypeDefs, userTypeDefs])
-const resolvers = mergeResolvers([userResolvers])
+const typeDefs = mergeTypeDefs([baseTypeDefs, userTypeDefs, productTypeDefs])
+const resolvers = mergeResolvers([userResolvers, productResolvers])
 
 
 export const schema = makeExecutableSchema({

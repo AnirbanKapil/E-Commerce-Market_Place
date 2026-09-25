@@ -20,7 +20,17 @@ export type Scalars = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']['output']>;
+  createProduct: Product;
   register: User;
+};
+
+
+export type MutationCreateProductArgs = {
+  description: Scalars['String']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  price: Scalars['Float']['input'];
+  stock: Scalars['Int']['input'];
 };
 
 
@@ -31,11 +41,29 @@ export type MutationRegisterArgs = {
   username: Scalars['String']['input'];
 };
 
+export type Product = {
+  __typename?: 'Product';
+  createdAt: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  stock: Scalars['Int']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
   me?: Maybe<User>;
+  product?: Maybe<Product>;
+  products: Array<Product>;
   users: Array<User>;
+};
+
+
+export type QueryProductArgs = {
+  id: Scalars['String']['input'];
 };
 
 export type User = {
@@ -60,6 +88,11 @@ export type RegisterUserMutationVariables = Exact<{
 
 
 export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, email: string } };
+
+export type GetProductsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, price: number, description: string, stock: number }> };
 
 
 export class TypedDocumentString<TResult, TVariables>
@@ -126,6 +159,34 @@ export const useRegisterUserMutation = <
       {
     mutationKey: ['RegisterUser'],
     mutationFn: (variables?: RegisterUserMutationVariables) => useCustomFetcher<RegisterUserMutation, RegisterUserMutationVariables>(RegisterUserDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const GetProductsDocument = new TypedDocumentString(`
+    query GetProducts {
+  products {
+    id
+    name
+    price
+    description
+    stock
+  }
+}
+    `);
+
+export const useGetProductsQuery = <
+      TData = GetProductsQuery,
+      TError = unknown
+    >(
+      variables?: GetProductsQueryVariables,
+      options?: Omit<UseQueryOptions<GetProductsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetProductsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetProductsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetProducts'] : ['GetProducts', variables],
+    queryFn: useCustomFetcher<GetProductsQuery, GetProductsQueryVariables>(GetProductsDocument, variables),
     ...options
   }
     )};

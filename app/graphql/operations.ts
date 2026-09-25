@@ -21,3 +21,15 @@ export const REGISTER_USER = gql(`
   }
 `)
 
+export const GET_PRODUCTS = gql`
+  query GetProducts {
+    products {
+      id
+      name
+      price
+      description
+      stock
+    }
+  }
+`
+
