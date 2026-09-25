@@ -32,6 +32,16 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float    
+  imageUrl    String?
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
