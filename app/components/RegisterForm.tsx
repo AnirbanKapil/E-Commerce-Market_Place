@@ -34,9 +34,6 @@ export default function RegisterForm() {
         router.refresh()
       }
     },
-    onError: (err : any) => {
-      setValidationError(err.message || 'Something went wrong during registration.')
-    }
   })
 
   const handleSubmit = (e: React.FormEvent) => {
