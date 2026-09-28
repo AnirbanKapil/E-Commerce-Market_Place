@@ -60,7 +60,10 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  password      String?   
+  password      String? 
+
+  role          Role      @default(USER) 
+
   accounts      Account[]
   sessions      Session[]
   cartItems     CartItem[]
@@ -121,4 +124,9 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum Role {
+  USER
+  ADMIN
 }
