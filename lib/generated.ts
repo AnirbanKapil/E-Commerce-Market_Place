@@ -17,11 +17,26 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CartItem = {
+  __typename?: 'CartItem';
+  id: Scalars['String']['output'];
+  product: Product;
+  quantity: Scalars['Int']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']['output']>;
+  addToCart: CartItem;
+  checkout: Order;
   createProduct: Product;
   register: User;
+};
+
+
+export type MutationAddToCartArgs = {
+  productId: Scalars['String']['input'];
+  quantity: Scalars['Int']['input'];
 };
 
 
@@ -41,6 +56,31 @@ export type MutationRegisterArgs = {
   username: Scalars['String']['input'];
 };
 
+export type Order = {
+  __typename?: 'Order';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  items: Array<OrderItem>;
+  status: OrderStatus;
+  totalAmount: Scalars['Float']['output'];
+};
+
+export type OrderItem = {
+  __typename?: 'OrderItem';
+  id: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
+  product: Product;
+  quantity: Scalars['Int']['output'];
+};
+
+export enum OrderStatus {
+  Cancelled = 'CANCELLED',
+  Delivered = 'DELIVERED',
+  Pending = 'PENDING',
+  Processing = 'PROCESSING',
+  Shipped = 'SHIPPED'
+}
+
 export type Product = {
   __typename?: 'Product';
   createdAt: Scalars['String']['output'];
@@ -55,7 +95,9 @@ export type Product = {
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
+  cart: Array<CartItem>;
   me?: Maybe<User>;
+  myOrders: Array<Order>;
   product?: Maybe<Product>;
   products: Array<Product>;
   users: Array<User>;
