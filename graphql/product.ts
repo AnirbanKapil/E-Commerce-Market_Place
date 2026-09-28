@@ -40,7 +40,9 @@ export const productResolvers = {
       if (!context.session?.user) {
         throw new Error("Unauthorized: You must log in to add store products.")
       }
-      
+      if (context.session.user.role !== 'ADMIN') {
+        throw new Error("Access Denied: Only store administrators can add new inventory items.")
+      }
       return await prisma.product.create({
         data: { name, description, price, stock, imageUrl }
       })
