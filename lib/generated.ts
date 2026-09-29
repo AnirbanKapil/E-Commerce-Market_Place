@@ -1,5 +1,5 @@
 import { DocumentTypeDecoration } from '@graphql-typed-document-node/core';
-import { useQuery, useMutation, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
+import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
 import { useCustomFetcher } from './fetcher';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -116,6 +116,17 @@ export type User = {
   username?: Maybe<Scalars['String']['output']>;
 };
 
+export type CreateProductMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  price: Scalars['Float']['input'];
+  stock: Scalars['Int']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'Product', id: string, name: string, price: number, stock: number } };
+
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -155,6 +166,36 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
+
+export const CreateProductDocument = new TypedDocumentString(`
+    mutation CreateProduct($name: String!, $description: String!, $price: Float!, $stock: Int!, $imageUrl: String) {
+  createProduct(
+    name: $name
+    description: $description
+    price: $price
+    stock: $stock
+    imageUrl: $imageUrl
+  ) {
+    id
+    name
+    price
+    stock
+  }
+}
+    `);
+
+export const useCreateProductMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateProductMutation, TError, CreateProductMutationVariables, TContext>) => {
+    
+    return useMutation<CreateProductMutation, TError, CreateProductMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateProduct'],
+    mutationFn: (variables?: CreateProductMutationVariables) => useCustomFetcher<CreateProductMutation, CreateProductMutationVariables>(CreateProductDocument, variables)(),
+    ...options
+  }
+    )};
 
 export const GetMeDocument = new TypedDocumentString(`
     query GetMe {
