@@ -8,17 +8,17 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Starting database seeding...')
 
-  const adminEmail = 'admin@example.com' // ✉️ Change this to your target email
-  const adminPassword = 'SuperSecurePassword123' // 🔑 Change this to a secure password
+  const adminEmail = 'admin@mail.com' 
+  const adminPassword = 'SuperSecure123' 
 
-  // 1. Hash the password securely using bcrypt
+  
   const hashedPassword = await bcrypt.hash(adminPassword, 12)
 
-  // 2. Upsert the User record (Creates the user if missing, updates to ADMIN if they exist)
+  
   const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {
-      role: 'ADMIN', // Enforces administrative privilege level overrides
+      role: 'ADMIN',
     },
     create: {
       email: adminEmail,
