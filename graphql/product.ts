@@ -83,21 +83,35 @@ export const productResolvers = {
       });
     },
     
-    product: async (_: any, { id }: { id: string }) => {
-      return await prisma.product.findUnique({ where: { id } })
-    }
-  },
+  product: async (_parent: any, { id }: { id: string }, context: Context) => {
+      const product = await context.prisma.product.findUnique({
+        where: { id },
+      });
+      
+      if (!product) {
+        throw new Error(`Product with ID ${id} could not be located.`);
+      }
+      
+      return product;
+    },
+  }, 
+  
   Mutation: {
-    createProduct: async (_: any, { name, description, price, stock, imageUrl }: any, context: any) => {
-      if (!context.session?.user) {
-        throw new Error("Unauthorized: You must log in to add store products.")
+     createProduct: async (_parent: any, args: any, context: Context) => {
+      // Simple fallback check ensuring the Admin verification guards executed properly
+      if (!context.user || context.user.role !== 'ADMIN') {
+        throw new Error('Unauthorised: Access requires administrative clearance levels.');
       }
-      if (context.session.user.role !== 'ADMIN') {
-        throw new Error("Access Denied: Only store administrators can add new inventory items.")
-      }
-      return await prisma.product.create({
-        data: { name, description, price, stock, imageUrl }
-      })
+
+      return await context.prisma.product.create({
+        data: {
+          name: args.name,
+          description: args.description,
+          price: args.price,
+          imageUrl: args.imageUrl,
+          stock: args.stock,
+        },
+      });
     }
   }
 }
