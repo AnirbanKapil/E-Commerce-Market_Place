@@ -17,8 +17,8 @@ type Product {
     createdAt: String!
   }
 
-  extend type Query {
-    products: (input: ProductsFilterInput): [Product!]!
+  type Query {
+    products(input: ProductsFilterInput): [Product!]!
     product(id: String!): Product
   }
 

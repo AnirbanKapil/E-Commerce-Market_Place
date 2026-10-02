@@ -92,6 +92,10 @@ export type Product = {
   stock: Scalars['Int']['output'];
 };
 
+export type ProductsFilterInput = {
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']['output']>;
@@ -106,6 +110,11 @@ export type Query = {
 
 export type QueryProductArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryProductsArgs = {
+  input?: InputMaybe<ProductsFilterInput>;
 };
 
 export type User = {
@@ -146,6 +155,13 @@ export type GetProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, price: number, description: string, stock: number }> };
+
+export type GetStorefrontProductsQueryVariables = Exact<{
+  input?: InputMaybe<ProductsFilterInput>;
+}>;
+
+
+export type GetStorefrontProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, description: string, price: number, imageUrl?: string | null, stock: number }> };
 
 
 export class TypedDocumentString<TResult, TVariables>
@@ -270,6 +286,35 @@ export const useGetProductsQuery = <
       {
     queryKey: variables === undefined ? ['GetProducts'] : ['GetProducts', variables],
     queryFn: useCustomFetcher<GetProductsQuery, GetProductsQueryVariables>(GetProductsDocument, variables),
+    ...options
+  }
+    )};
+
+export const GetStorefrontProductsDocument = new TypedDocumentString(`
+    query GetStorefrontProducts($input: ProductsFilterInput) {
+  products(input: $input) {
+    id
+    name
+    description
+    price
+    imageUrl
+    stock
+  }
+}
+    `);
+
+export const useGetStorefrontProductsQuery = <
+      TData = GetStorefrontProductsQuery,
+      TError = unknown
+    >(
+      variables?: GetStorefrontProductsQueryVariables,
+      options?: Omit<UseQueryOptions<GetStorefrontProductsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetStorefrontProductsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetStorefrontProductsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetStorefrontProducts'] : ['GetStorefrontProducts', variables],
+    queryFn: useCustomFetcher<GetStorefrontProductsQuery, GetStorefrontProductsQueryVariables>(GetStorefrontProductsDocument, variables),
     ...options
   }
     )};

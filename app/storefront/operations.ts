@@ -1,6 +1,6 @@
 
-import { gql } from "graphql-tag";
 
+import { gql } from 'graphql-tag';
 
 export const GET_STOREFRONT_PRODUCTS = gql`
   query GetStorefrontProducts($input: ProductsFilterInput) {
@@ -14,3 +14,4 @@ export const GET_STOREFRONT_PRODUCTS = gql`
     }
   }
 `;
+
