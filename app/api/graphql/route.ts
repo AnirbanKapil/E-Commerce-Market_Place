@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 import { authOptions } from "../auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next"
 import { schema } from '@/graphql'
-
+import  prisma from "@/lib/prisma"
 
 
 
@@ -42,7 +42,13 @@ const handler = startServerAndCreateNextHandler<NextRequest>(server, {
   context: async (req) => {
   
     const session = await getServerSession(authOptions)
-    return { req, session }
+     return {
+      prisma,
+      user: session?.user ? {
+        id: session?.user?.id,
+        role: session?.user?.role, 
+      } : undefined,
+    };
   },
 });
 

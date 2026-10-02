@@ -5,6 +5,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema'
 import { userTypeDefs, userResolvers } from './user'
 import { productTypeDefs, productResolvers } from './product'
 import { orderTypeDefs, orderResolvers } from './order'
+import { authDirectiveTransformer } from './authDirective';
 
 
 const baseTypeDefs = gql`
@@ -16,13 +17,22 @@ const baseTypeDefs = gql`
   type Mutation {
     _empty: String
   }
+
+  enum Role {
+    USER
+    ADMIN
+  }
 `
 
 const typeDefs = mergeTypeDefs([baseTypeDefs, userTypeDefs, productTypeDefs, orderTypeDefs])
 const resolvers = mergeResolvers([userResolvers, productResolvers, orderResolvers])
 
 
-export const schema = makeExecutableSchema({
+let schema = makeExecutableSchema({
   typeDefs,
   resolvers,
 })
+
+schema = authDirectiveTransformer(schema, 'auth');
+
+export { schema }
