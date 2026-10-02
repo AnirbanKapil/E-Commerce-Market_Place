@@ -8,6 +8,8 @@ import { orderTypeDefs, orderResolvers } from './order'
 
 
 const baseTypeDefs = gql`
+  directive @auth(role: Role!) on FIELD_DEFINITION
+  
   type Query {
     _empty: String
   }
