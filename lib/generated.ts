@@ -117,6 +117,11 @@ export type QueryProductsArgs = {
   input?: InputMaybe<ProductsFilterInput>;
 };
 
+export enum Role {
+  Admin = 'ADMIN',
+  User = 'USER'
+}
+
 export type User = {
   __typename?: 'User';
   email: Scalars['String']['output'];

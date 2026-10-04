@@ -44,6 +44,7 @@ const handler = startServerAndCreateNextHandler<NextRequest>(server, {
     const session = await getServerSession(authOptions)
      return {
       prisma,
+      session,
       user: session?.user ? {
         id: session?.user?.id,
         role: session?.user?.role, 
