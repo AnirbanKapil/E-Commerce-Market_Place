@@ -11,10 +11,8 @@ export default function StorefrontClient() {
 
   // Pipe the live text search input straight to your hooks layer
   const { data, isLoading, error } = useGetStorefrontProductsQuery({
-    variables: {
       input: {
-        search: search ? search : undefined,
-      },
+        search:  search || undefined,
     },
   });
 
@@ -48,7 +46,7 @@ export default function StorefrontClient() {
           </div>
         )}
 
-        {error && (
+        {error !=null  && (
           <div className="rounded-md bg-red-50 p-4 dark:bg-red-950/30">
             <p className="text-sm font-medium text-red-800 dark:text-red-400">
               {error instanceof Error ? error.message : 'An error occurred loading our collection.'}
