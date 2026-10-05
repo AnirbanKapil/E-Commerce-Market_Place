@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useGetProductsQuery, useCreateProductMutation } from '@/lib/generated'
 import { useQueryClient } from '@tanstack/react-query'
+import CreateProductDrawer from './CreateProductDrawer';
 
 export default function AdminInventoryPage() {
   const { data: session, status } = useSession()
@@ -17,6 +18,7 @@ export default function AdminInventoryPage() {
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  
 
   const { data: productsData, isLoading: productsLoading } = useGetProductsQuery()
 
@@ -195,6 +197,10 @@ export default function AdminInventoryPage() {
                   {isPending ? 'Saving Product...' : 'Publish Product'}
                 </button>
               </div>
+              <div className="mt-8 rounded-lg border border-neutral-200 p-8 text-center text-sm text-neutral-500 dark:border-neutral-800">
+                 Active product data grids pull and display here...
+              </div>
+              <CreateProductDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
             </form>
           </div>
         </div>
