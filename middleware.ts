@@ -16,6 +16,7 @@ export default withAuth(
 
         if (
           pathname === "/" || 
+          pathname === "/products" ||
           pathname === "/login" || 
           pathname === "/register"
         ) {
