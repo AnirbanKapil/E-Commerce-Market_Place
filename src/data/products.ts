@@ -4,7 +4,6 @@
 // photos, seeded by slug so each product always gets the same image).
 
 export type Product = {
-  id: string;
   slug: string;
   name: string;
   description: string;
@@ -14,7 +13,7 @@ export type Product = {
   mrp: number; // original price (INR)
   stock: number;
   rating: number; // 0-5
-  image: string;
+  imageUrl: string;
   merchantId: string; // which merchant owns this product
   isActive: boolean; // only active products show to customers
 };
@@ -25,7 +24,7 @@ export const MERCHANT_IDS = ["merchant_1", "merchant_2"];
 const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-type Seed = Omit<Product, "id" | "slug" | "image" | "merchantId" | "isActive">;
+type Seed = Omit<Product, "slug" | "imageUrl" | "merchantId" | "isActive">;
 
 const seed: Seed[] = [
   // ---------- Electronics ----------
@@ -291,9 +290,8 @@ const seed: Seed[] = [
 
 export const products: Product[] = seed.map((p, i) => ({
   ...p,
-  id: `prod_${i + 1}`,
   slug: slugify(p.name),
-  image: `https://picsum.photos/seed/${slugify(p.name)}/600/600`,
+  imageUrl: `https://picsum.photos/seed/${slugify(p.name)}/600/600`,
   merchantId: MERCHANT_IDS[i % MERCHANT_IDS.length],
   isActive: true,
 }));
