@@ -13,8 +13,8 @@ export const GET_ME = gql(`
 `)
 
 export const REGISTER_USER = gql(`
-  mutation RegisterUser($email: String!, $username: String!, $name: String!, $password: String!) {
-    register(email: $email, username: $username, name: $name, password: $password) {
+  mutation RegisterUser($email: String!, $username: String!, $name: String!, $password: String!, $role: SignupRole!, $storeName: String) {
+    register(email: $email, username: $username, name: $name, password: $password, role: $role, storeName: $storeName) {
       id
       email
     }

@@ -53,6 +53,8 @@ export type MutationRegisterArgs = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  role?: InputMaybe<SignupRole>;
+  storeName?: InputMaybe<Scalars['String']['input']>;
   username: Scalars['String']['input'];
 };
 
@@ -119,6 +121,12 @@ export type QueryProductsArgs = {
 
 export enum Role {
   Admin = 'ADMIN',
+  Seller = 'SELLER',
+  User = 'USER'
+}
+
+export enum SignupRole {
+  Seller = 'SELLER',
   User = 'USER'
 }
 
@@ -151,6 +159,8 @@ export type RegisterUserMutationVariables = Exact<{
   username: Scalars['String']['input'];
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  role: SignupRole;
+  storeName?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -246,8 +256,15 @@ export const useGetMeQuery = <
     )};
 
 export const RegisterUserDocument = new TypedDocumentString(`
-    mutation RegisterUser($email: String!, $username: String!, $name: String!, $password: String!) {
-  register(email: $email, username: $username, name: $name, password: $password) {
+    mutation RegisterUser($email: String!, $username: String!, $name: String!, $password: String!, $role: SignupRole!, $storeName: String) {
+  register(
+    email: $email
+    username: $username
+    name: $name
+    password: $password
+    role: $role
+    storeName: $storeName
+  ) {
     id
     email
   }

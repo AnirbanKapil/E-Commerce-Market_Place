@@ -21,6 +21,7 @@ const baseTypeDefs = gql`
   enum Role {
     USER
     ADMIN
+    SELLER
   }
 `
 

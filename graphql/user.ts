@@ -12,13 +12,18 @@ export const userTypeDefs = gql`
     username: String
   }
 
+  enum SignupRole {
+    USER
+    SELLER
+  }
+
   extend type Query {
     me: User
     users: [User!]!
   }
 
   extend type Mutation {
-    register(email: String!, username: String!, name: String!, password: String!): User!
+    register(email: String!, username: String!, name: String!, password: String!, role: SignupRole = USER, storeName: String): User!
   }
 `
 
@@ -32,7 +37,10 @@ export const userResolvers = {
     }
   },
   Mutation: {
-    register: async (_: any, { email, username, name, password }: any) => {
+    register: async (_: any, { email, username, name, password, role = 'USER', storeName }: any) => {
+      if (role === 'SELLER' && !storeName?.trim()) {
+        throw new Error('Store name is required for seller accounts')
+      }
       const existingUser = await prisma.user.findFirst({
         where: { OR: [{ email }, { username }] }
       })
@@ -40,7 +48,14 @@ export const userResolvers = {
 
       const hashedPassword = await bcrypt.hash(password, 12)
       return await prisma.user.create({
-        data: { email, username, name, password: hashedPassword }
+        data: {
+          email,
+          username,
+          name,
+          password: hashedPassword,
+          role,
+          ...(role === 'SELLER' ? { store: { create: { name: storeName.trim() } } } : {}),
+        },
       })
     }
   }

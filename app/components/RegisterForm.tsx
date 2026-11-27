@@ -13,6 +13,8 @@ export default function RegisterForm() {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState<'USER' | 'SELLER'>('USER')
+  const [storeName, setStoreName] = useState('')
   
   
   const [validationError, setValidationError] = useState<string | null>(null)
@@ -47,7 +49,7 @@ export default function RegisterForm() {
     }
 
    
-    registerUser({ email, username, name, password })
+    registerUser({ email, username, name, password, role, storeName: role === 'SELLER' ? storeName : null })
   }
 
   return (
@@ -67,6 +69,34 @@ export default function RegisterForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            Account Type
+          </label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as 'USER' | 'SELLER')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="USER">Customer</option>
+            <option value="SELLER">Seller</option>
+          </select>
+        </div>
+
+        {role === 'SELLER' && <div>
+          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            Store Name
+          </label>
+          <input
+            type="text"
+            required
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
+            placeholder="Carter Goods"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+        </div>}
+
         <div>
           <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
             Full Name
