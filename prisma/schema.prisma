@@ -43,7 +43,12 @@ model Product {
   createdAt   DateTime @default(now())
   cartItems   CartItem[]
   orderItems  OrderItem[]
+  isActive    Boolean  @default(true)
+  storeId     String?
+  store       Store?   @relation(fields: [storeId], references: [id])
 
+  @@index([storeId])
+  @@index([category])
 }
 
 model Session {
@@ -79,6 +84,7 @@ model Store {
   updatedAt DateTime @updatedAt
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products  Product[]
 }
 
 model CartItem {
@@ -118,7 +124,7 @@ model OrderItem {
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
 }
 
 model VerificationToken {
