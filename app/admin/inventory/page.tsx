@@ -15,6 +15,7 @@ export default function AdminInventoryPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [category, setCategory] = useState('')
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
   const [imageUrl, setImageUrl] = useState('')
@@ -29,6 +30,7 @@ export default function AdminInventoryPage() {
       
       setName('')
       setDescription('')
+      setCategory('')
       setPrice('')
       setStock('')
       setImageUrl('')
@@ -54,6 +56,7 @@ export default function AdminInventoryPage() {
     addProduct({
       name,
       description,
+      category,
       price: parseFloat(price),
       stock: parseInt(stock, 10),
       imageUrl: imageUrl || null
@@ -155,6 +158,14 @@ export default function AdminInventoryPage() {
                 <textarea 
                   required rows={3} placeholder="Premium industry-leading noise cancelling headphones..." value={description} onChange={e => setDescription(e.target.value)}
                   className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Category</label>
+                <input
+                  type="text" required placeholder="Electronics" value={category} onChange={e => setCategory(e.target.value)}
+                  className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 

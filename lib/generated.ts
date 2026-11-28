@@ -31,6 +31,8 @@ export type Mutation = {
   checkout: Order;
   createProduct: Product;
   register: User;
+  updateProduct: Product;
+  updateStore: Store;
 };
 
 
@@ -41,11 +43,14 @@ export type MutationAddToCartArgs = {
 
 
 export type MutationCreateProductArgs = {
+  category: Scalars['String']['input'];
   description: Scalars['String']['input'];
   imageUrl?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   stock: Scalars['Int']['input'];
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -56,6 +61,23 @@ export type MutationRegisterArgs = {
   role?: InputMaybe<SignupRole>;
   storeName?: InputMaybe<Scalars['String']['input']>;
   username: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateProductArgs = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<Scalars['Float']['input']>;
+  stock?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type MutationUpdateStoreArgs = {
+  name: Scalars['String']['input'];
 };
 
 export type Order = {
@@ -85,17 +107,24 @@ export enum OrderStatus {
 
 export type Product = {
   __typename?: 'Product';
+  category: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   imageUrl?: Maybe<Scalars['String']['output']>;
+  isActive: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   price: Scalars['Float']['output'];
   stock: Scalars['Int']['output'];
+  store?: Maybe<Store>;
+  storeId?: Maybe<Scalars['String']['output']>;
 };
 
 export type ProductsFilterInput = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Query = {
@@ -104,8 +133,11 @@ export type Query = {
   cart: Array<CartItem>;
   me?: Maybe<User>;
   myOrders: Array<Order>;
+  myStore?: Maybe<Store>;
   product?: Maybe<Product>;
   products: Array<Product>;
+  store?: Maybe<Store>;
+  stores: Array<Store>;
   users: Array<User>;
 };
 
@@ -119,6 +151,11 @@ export type QueryProductsArgs = {
   input?: InputMaybe<ProductsFilterInput>;
 };
 
+
+export type QueryStoreArgs = {
+  id: Scalars['String']['input'];
+};
+
 export enum Role {
   Admin = 'ADMIN',
   Seller = 'SELLER',
@@ -130,29 +167,44 @@ export enum SignupRole {
   User = 'USER'
 }
 
+export type Store = {
+  __typename?: 'Store';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  owner: User;
+  products: Array<Product>;
+  updatedAt: Scalars['String']['output'];
+};
+
 export type User = {
   __typename?: 'User';
-  email: Scalars['String']['output'];
+  email?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
+  role: Role;
+  store?: Maybe<Store>;
   username?: Maybe<Scalars['String']['output']>;
 };
 
 export type CreateProductMutationVariables = Exact<{
   name: Scalars['String']['input'];
   description: Scalars['String']['input'];
+  category: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   stock: Scalars['Int']['input'];
   imageUrl?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
-export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'Product', id: string, name: string, price: number, stock: number } };
+export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'Product', id: string, name: string, category: string, price: number, stock: number, isActive: boolean, storeId?: string | null } };
 
 export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, name?: string | null, username?: string | null } | null };
+export type GetMeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email?: string | null, name?: string | null, username?: string | null, role: Role, store?: { __typename?: 'Store', id: string, name: string } | null } | null };
 
 export type RegisterUserMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -164,19 +216,50 @@ export type RegisterUserMutationVariables = Exact<{
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, email: string } };
+export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, email?: string | null, role: Role, store?: { __typename?: 'Store', id: string, name: string } | null } };
 
 export type GetProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, price: number, description: string, stock: number }> };
+export type GetProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, category: string, price: number, description: string, stock: number, isActive: boolean, storeId?: string | null }> };
+
+export type GetMyStoreQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyStoreQuery = { __typename?: 'Query', myStore?: { __typename?: 'Store', id: string, name: string, createdAt: string, updatedAt: string, products: Array<{ __typename?: 'Product', id: string, name: string, category: string, price: number, stock: number, isActive: boolean }> } | null };
+
+export type GetStoresQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetStoresQuery = { __typename?: 'Query', stores: Array<{ __typename?: 'Store', id: string, name: string, createdAt: string, owner: { __typename?: 'User', id: string, name?: string | null }, products: Array<{ __typename?: 'Product', id: string, name: string, category: string, price: number, imageUrl?: string | null, isActive: boolean }> }> };
+
+export type UpdateProductMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  category?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<Scalars['Float']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  stock?: InputMaybe<Scalars['Int']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'Product', id: string, name: string, category: string, price: number, stock: number, isActive: boolean, storeId?: string | null } };
+
+export type UpdateStoreMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+}>;
+
+
+export type UpdateStoreMutation = { __typename?: 'Mutation', updateStore: { __typename?: 'Store', id: string, name: string, updatedAt: string } };
 
 export type GetStorefrontProductsQueryVariables = Exact<{
   input?: InputMaybe<ProductsFilterInput>;
 }>;
 
 
-export type GetStorefrontProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, description: string, price: number, imageUrl?: string | null, stock: number }> };
+export type GetStorefrontProductsQuery = { __typename?: 'Query', products: Array<{ __typename?: 'Product', id: string, name: string, description: string, category: string, price: number, imageUrl?: string | null, stock: number, isActive: boolean, storeId?: string | null, store?: { __typename?: 'Store', id: string, name: string } | null }> };
 
 
 export class TypedDocumentString<TResult, TVariables>
@@ -199,18 +282,24 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const CreateProductDocument = new TypedDocumentString(`
-    mutation CreateProduct($name: String!, $description: String!, $price: Float!, $stock: Int!, $imageUrl: String) {
+    mutation CreateProduct($name: String!, $description: String!, $category: String!, $price: Float!, $stock: Int!, $imageUrl: String, $storeId: String, $isActive: Boolean) {
   createProduct(
     name: $name
     description: $description
+    category: $category
     price: $price
     stock: $stock
     imageUrl: $imageUrl
+    storeId: $storeId
+    isActive: $isActive
   ) {
     id
     name
+    category
     price
     stock
+    isActive
+    storeId
   }
 }
     `);
@@ -235,6 +324,11 @@ export const GetMeDocument = new TypedDocumentString(`
     email
     name
     username
+    role
+    store {
+      id
+      name
+    }
   }
 }
     `);
@@ -267,6 +361,11 @@ export const RegisterUserDocument = new TypedDocumentString(`
   ) {
     id
     email
+    role
+    store {
+      id
+      name
+    }
   }
 }
     `);
@@ -289,9 +388,12 @@ export const GetProductsDocument = new TypedDocumentString(`
   products {
     id
     name
+    category
     price
     description
     stock
+    isActive
+    storeId
   }
 }
     `);
@@ -312,15 +414,154 @@ export const useGetProductsQuery = <
   }
     )};
 
+export const GetMyStoreDocument = new TypedDocumentString(`
+    query GetMyStore {
+  myStore {
+    id
+    name
+    createdAt
+    updatedAt
+    products {
+      id
+      name
+      category
+      price
+      stock
+      isActive
+    }
+  }
+}
+    `);
+
+export const useGetMyStoreQuery = <
+      TData = GetMyStoreQuery,
+      TError = unknown
+    >(
+      variables?: GetMyStoreQueryVariables,
+      options?: Omit<UseQueryOptions<GetMyStoreQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetMyStoreQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetMyStoreQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetMyStore'] : ['GetMyStore', variables],
+    queryFn: useCustomFetcher<GetMyStoreQuery, GetMyStoreQueryVariables>(GetMyStoreDocument, variables),
+    ...options
+  }
+    )};
+
+export const GetStoresDocument = new TypedDocumentString(`
+    query GetStores {
+  stores {
+    id
+    name
+    createdAt
+    owner {
+      id
+      name
+    }
+    products {
+      id
+      name
+      category
+      price
+      imageUrl
+      isActive
+    }
+  }
+}
+    `);
+
+export const useGetStoresQuery = <
+      TData = GetStoresQuery,
+      TError = unknown
+    >(
+      variables?: GetStoresQueryVariables,
+      options?: Omit<UseQueryOptions<GetStoresQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<GetStoresQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<GetStoresQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['GetStores'] : ['GetStores', variables],
+    queryFn: useCustomFetcher<GetStoresQuery, GetStoresQueryVariables>(GetStoresDocument, variables),
+    ...options
+  }
+    )};
+
+export const UpdateProductDocument = new TypedDocumentString(`
+    mutation UpdateProduct($id: String!, $name: String, $description: String, $category: String, $price: Float, $imageUrl: String, $stock: Int, $isActive: Boolean) {
+  updateProduct(
+    id: $id
+    name: $name
+    description: $description
+    category: $category
+    price: $price
+    imageUrl: $imageUrl
+    stock: $stock
+    isActive: $isActive
+  ) {
+    id
+    name
+    category
+    price
+    stock
+    isActive
+    storeId
+  }
+}
+    `);
+
+export const useUpdateProductMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateProductMutation, TError, UpdateProductMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateProductMutation, TError, UpdateProductMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateProduct'],
+    mutationFn: (variables?: UpdateProductMutationVariables) => useCustomFetcher<UpdateProductMutation, UpdateProductMutationVariables>(UpdateProductDocument, variables)(),
+    ...options
+  }
+    )};
+
+export const UpdateStoreDocument = new TypedDocumentString(`
+    mutation UpdateStore($name: String!) {
+  updateStore(name: $name) {
+    id
+    name
+    updatedAt
+  }
+}
+    `);
+
+export const useUpdateStoreMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateStoreMutation, TError, UpdateStoreMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateStoreMutation, TError, UpdateStoreMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateStore'],
+    mutationFn: (variables?: UpdateStoreMutationVariables) => useCustomFetcher<UpdateStoreMutation, UpdateStoreMutationVariables>(UpdateStoreDocument, variables)(),
+    ...options
+  }
+    )};
+
 export const GetStorefrontProductsDocument = new TypedDocumentString(`
     query GetStorefrontProducts($input: ProductsFilterInput) {
   products(input: $input) {
     id
     name
     description
+    category
     price
     imageUrl
     stock
+    isActive
+    storeId
+    store {
+      id
+      name
+    }
   }
 }
     `);

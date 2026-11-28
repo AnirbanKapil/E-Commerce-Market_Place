@@ -65,9 +65,21 @@ export const orderResolvers = {
   Mutation: {
     addToCart: async (_: any, { productId, quantity }: any, context: any) => {
       if (!context.session?.user) throw new Error("Not authenticated")
+      if (!Number.isInteger(quantity) || quantity < 1) throw new Error('Quantity must be a positive integer')
+
+      const product = await prisma.product.findUnique({ where: { id: productId } })
+      if (!product || !product.isActive) throw new Error('This product is not available')
       
       const user = await prisma.user.findUnique({ where: { email: context.session.user.email } })
       if (!user) throw new Error("User record not found")
+
+      const existingCartItem = await prisma.cartItem.findUnique({
+        where: { userId_productId: { userId: user.id, productId } },
+      })
+      const requestedQuantity = (existingCartItem?.quantity ?? 0) + quantity
+      if (product.stock < requestedQuantity) {
+        throw new Error(`Only ${product.stock} units are currently available`)
+      }
 
       return await prisma.cartItem.upsert({
         where: { userId_productId: { userId: user.id, productId } },
@@ -86,6 +98,13 @@ export const orderResolvers = {
 
       if (!user || user.cartItems.length === 0) throw new Error("Your shopping cart is empty")
 
+      for (const item of user.cartItems) {
+        if (!item.product.isActive) throw new Error(`${item.product.name} is no longer available`)
+        if (item.product.stock < item.quantity) {
+          throw new Error(`Insufficient inventory for product: ${item.product.name}`)
+        }
+      }
+
       
       const totalAmount = user.cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
 
@@ -99,10 +118,6 @@ export const orderResolvers = {
         })
 
         for (const item of user.cartItems) {
-          if (item.product.stock < item.quantity) {
-            throw new Error(`Insufficient inventory for product: ${item.product.name}`)
-          }
-
           await tx.product.update({
             where: { id: item.productId },
             data: { stock: { decrement: item.quantity } }

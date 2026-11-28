@@ -8,9 +8,13 @@ export const GET_STOREFRONT_PRODUCTS = gql`
       id
       name
       description
+      category
       price
       imageUrl
       stock
+      isActive
+      storeId
+      store { id name }
     }
   }
 `;

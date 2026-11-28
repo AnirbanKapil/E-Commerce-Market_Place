@@ -7,7 +7,7 @@ import { GraphQLSchema, defaultFieldResolver } from 'graphql';
 interface AuthContext {
   user?: {
     id: string;
-    role: 'USER' | 'ADMIN';
+    role: 'USER' | 'ADMIN' | 'SELLER';
   };
 }
 
@@ -30,9 +30,9 @@ export function authDirectiveTransformer(schema: GraphQLSchema, directiveName: s
             throw new Error('UNAUTHENTICATED: Request requires active customer session routing.');
           }
 
-          // 2. Guard role escalation privileges (If ADMIN is required but role is USER)
-          if (requiredRole === 'ADMIN' && context.user.role !== 'ADMIN') {
-            throw new Error('FORBIDDEN: Administrative permission token clearance required.');
+          // 2. Require the role declared by the field.
+          if (context.user.role !== requiredRole) {
+            throw new Error(`FORBIDDEN: ${requiredRole} permission is required.`);
           }
 
           // 3. Fall through to the original backend resolver if constraints match

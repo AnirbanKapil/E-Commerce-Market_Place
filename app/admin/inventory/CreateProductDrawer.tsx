@@ -16,6 +16,7 @@ export default function CreateProductDrawer({ isOpen, onClose }: CreateProductDr
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    category: '',
     price: '',
     imageUrl: '',
     stock: '',
@@ -29,7 +30,7 @@ export default function CreateProductDrawer({ isOpen, onClose }: CreateProductDr
       queryClient.invalidateQueries({ queryKey: ['GetProducts'] });
       
       // Reset form and close panel
-      setFormData({ name: '', description: '', price: '', imageUrl: '', stock: '' });
+      setFormData({ name: '', description: '', category: '', price: '', imageUrl: '', stock: '' });
       onClose();
     },
   });
@@ -43,6 +44,7 @@ export default function CreateProductDrawer({ isOpen, onClose }: CreateProductDr
     mutate({
       name: formData.name,
       description: formData.description,
+      category: formData.category,
       price: parseFloat(formData.price) || 0.0,
       stock: parseInt(formData.stock, 10) || 0,
       imageUrl: formData.imageUrl.trim() || null,
@@ -89,6 +91,17 @@ export default function CreateProductDrawer({ isOpen, onClose }: CreateProductDr
                 rows={3}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-neutral-900 focus:outline-hidden dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">Category</label>
+              <input
+                type="text"
+                required
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 className="mt-1 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-neutral-900 focus:outline-hidden dark:border-neutral-700 dark:bg-neutral-800 dark:text-white"
               />
             </div>
